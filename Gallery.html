@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport"content="width=device-width,initial-scale=1"><title>Gallery-ELIDENS</title>
+<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet"href="style1.css">
+</head>
+<body>
+<header><nav class="navbar"><a href="#"class="nav-logo"><h2>🕊 ELIDENS</h2></a>
+<ul class="nav-menu">
+<li><a href="index.html">Home</a></li>
+<li><a href="about.html">About</a></li>
+<li><a href="Sections.html">Sections</a></li>
+<li><a href="Gallery.html"class="active">Gallery</a></li>
+<li><a href="Contact.html">Contact</a></li>
+</ul></nav></header>
+
+<div class="gallery-container">
+<div class="gallery-banner"><img src="Images/g.png"alt="Gallery Banner"class="banner-image"></div>
+<div class="gallery-title-section"><h1>📸 School Gallery</h1><p>Share memories and moments</p></div>
+<div class="gallery-posts"id="dynamic-posts"></div>
+</div>
+
+<footer class="end"></footer>
+<script type="module">
+import{db}from'./firebase-config.js';import{collection,doc,getDoc,setDoc,updateDoc,deleteDoc,onSnapshot,getDocs,query,where,orderBy,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";import{getTimeAgo,createUser,fileToDataURL}from'./utils.js';const currentUser=createUser();let posts=[];
+const postsRef = collection(db, 'gallery-posts');
+const postsQuery = query(postsRef, orderBy('createdAt', 'desc'));
+const loadPosts = () => onSnapshot(postsQuery, s => { posts = []; s.forEach(d => posts.push({ id: d.id, ...d.data() })); displayPosts(); });
+const displayPosts = () => {
+	const c = document.getElementById('dynamic-posts');
+	c.innerHTML = posts.length ? '' : '<p style="text-align:center;color:#6c7a92;padding:40px">No posts yet</p>';
+	posts.forEach(p => {
+		const el = document.createElement('div');
+		el.className = 'post';
+		el.setAttribute('data-post-id', p.id);
+		const t = getTimeAgo(p.createdAt?.toDate?.() ?? new Date());
+		const m = p.mediaType === 'image'
+			? `<div class="post-media"><img src="${p.mediaUrl}" alt="Post" class="media-image"></div>`
+			: p.mediaType === 'video'
+				? `<div class="post-media video-post"><video controls class="media-video"><source src="${p.mediaUrl}" type="video/mp4"></video></div>`
+				: '';
+		const liked = p.likedBy?.includes(currentUser);
+		const authorImg = 'Images/gallery.avif';
+		el.innerHTML = `
+			<div class="post-header">
+				<div class="post-author">
+					<img src="${authorImg}" alt="Author" class="author-avatar">
+					<div>
+						<h3>${p.author || p.title || 'Unknown'}</h3>
+						<span class="post-time">${t}</span>
+					</div>
+				</div>
+			</div>
+			<div class="post-content">
+				<h4 class="post-title">${p.title || ''}</h4>
+				<p>${p.content || ''}</p>
+			</div>
+			${m}
+			<div class="post-stats">
+				<span class="likes"><i class="fas fa-thumbs-up" style="color:#2aae2a"></i> ${p.likes || 0} Likes</span>
+				<span class="comment-count" data-post-id="${p.id}">0 Comments</span>
+			</div>
+			<div class="post-actions">
+				<button class="action-btn${liked ? ' liked' : ''}" onclick="toggleLike(this,'${p.id}')">${liked ? '<i class="fas fa-thumbs-up"></i> Liked' : '<i class="far fa-thumbs-up"></i> Like'}</button>
+				<button class="action-btn" onclick="toggleCommentBox(this,'${p.id}')"><i class="far fa-comment"></i> Comment</button>
+				<button class="action-btn"><i class="fas fa-share"></i> Share</button>
+			</div>
+			<div class="comments-section hidden" id="comments-${p.id}">
+				<div class="comment-input-box">
+					<input type="text" placeholder="Comment...">
+					<button onclick="addComment(this,'${p.id}')"><i class="fas fa-paper-plane"></i></button>
+				</div>
+			</div>
+		`;
+		c.appendChild(el);
+		loadCommentsForPost(p.id);
+		loadLikesForPost(p.id);
+	});
+	console.debug('Loaded posts:', posts.length, posts.map(p => ({ id: p.id, title: p.title })));
+};
+const loadCommentsForPost = postId => {
+	const q = query(collection(db, 'comments'), where('postId', '==', postId));
+	onSnapshot(q, snapshot => {
+		const section = document.getElementById(`comments-${postId}`);
+		if (!section) return;
+		// remove existing comments
+		section.querySelectorAll('.comment').forEach(c => c.remove());
+		// update count
+		const count = snapshot.size;
+		const counterEl = document.querySelector(`.comment-count[data-post-id="${postId}"]`);
+		if (counterEl) counterEl.textContent = count + ' Comments';
+		// render comments safely
+		snapshot.forEach(docSnap => {
+			const d = docSnap.data();
+			const div = document.createElement('div');
+			div.className = 'comment' + (d.flagged ? ' flagged-comment' : '');
+			const content = document.createElement('div');
+			content.className = 'comment-content';
+			const h4 = document.createElement('h4');
+			h4.textContent = d.userName || 'User';
+			const p = document.createElement('p');
+			p.textContent = d.text || '';
+			const time = document.createElement('span');
+			time.className = 'comment-time';
+			time.textContent = getTimeAgo(d.timestamp?.toDate?.() ?? new Date());
+			content.appendChild(h4);
+			content.appendChild(p);
+			content.appendChild(time);
+			const actions = document.createElement('div');
+			actions.className = 'comment-actions';
+			const delBtn = document.createElement('button');
+			delBtn.onclick = () => deleteComment(docSnap.id);
+			delBtn.innerHTML = '<i class="fas fa-trash"></i>';
+			const editBtn = document.createElement('button');
+			editBtn.onclick = () => editComment(docSnap.id, d.text || '');
+			editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+			const flagBtn = document.createElement('button');
+			flagBtn.onclick = () => flagComment(docSnap.id);
+			flagBtn.innerHTML = '<i class="fas fa-flag"></i>';
+			actions.appendChild(delBtn);
+			actions.appendChild(editBtn);
+			actions.appendChild(flagBtn);
+			div.appendChild(content);
+			div.appendChild(actions);
+			const inputBox = section.querySelector('.comment-input-box');
+			section.insertBefore(div, inputBox);
+		});
+	});
+};
+
+const loadLikesForPost = postId => {
+	onSnapshot(doc(db, 'gallery-posts', postId), docSnap => {
+		if (!docSnap.exists()) return;
+		const d = docSnap.data();
+		const post = document.querySelector(`[data-post-id="${postId}"]`);
+		if (!post) return;
+		const likesEl = post.querySelector('.post-stats .likes');
+		if (likesEl) likesEl.innerHTML = `<i class="fas fa-thumbs-up" style="color:#2aae2a"></i> ${d.likes || 0} Likes`;
+		const btn = post.querySelector('.post-actions .action-btn');
+		if (!btn) return;
+		if (d.likedBy?.includes(currentUser)) {
+			btn.classList.add('liked');
+			btn.innerHTML = '<i class="fas fa-thumbs-up"></i> Liked';
+		} else {
+			btn.classList.remove('liked');
+			btn.innerHTML = '<i class="far fa-thumbs-up"></i> Like';
+		}
+	});
+};
+window.toggleLike=async(btn,pid)=>{try{const ref=doc(db,'gallery-posts',pid),snap=await getDoc(ref),d=snap.data(),newLikes=d.likes||0,newLiked=[...(d.likedBy||[])];if(newLiked.includes(currentUser)){newLiked.splice(newLiked.indexOf(currentUser),1);await updateDoc(ref,{likes:newLikes-1,likedBy:newLiked})}else{newLiked.push(currentUser);await updateDoc(ref,{likes:newLikes+1,likedBy:newLiked})}}catch(e){alert('Error: '+e.message)}};
+window.toggleCommentBox=(btn,pid)=>document.getElementById(`comments-${pid}`).classList.toggle('hidden');
+window.addComment=async(btn,pid)=>{const input=btn.previousElementSibling;const text=input.value.trim();if(!text)return alert('Type a comment');try{await setDoc(doc(collection(db,'comments')),{postId:pid,userName:currentUser.replace('Anonymous_','User'),text,flagged:false,timestamp:serverTimestamp()}),input.value=''}catch(e){alert('Error: '+e.message)}};
+window.deleteComment=async cid=>confirm('Delete?')&&deleteDoc(doc(db,'comments',cid)).then(()=>alert('Deleted')).catch(e=>alert('Error: '+e.message));
+window.editComment=async(cid,text)=>{const newText=prompt('Edit:',text);newText&&newText.trim()&&newText!==text&&updateDoc(doc(db,'comments',cid),{text:newText.trim(),edited:true,editedAt:serverTimestamp()}).then(()=>alert('Updated')).catch(e=>alert('Error: '+e.message))};
+window.flagComment=async cid=>{const ref=doc(db,'comments',cid);const snap=await getDoc(ref);const flagged=snap.data().flagged;updateDoc(ref,{flagged:!flagged}).then(()=>alert(flagged?'Unflagged':'Flagged')).catch(e=>alert('Error: '+e.message))};
+loadPosts();
+</script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport"content="width=device-width,initial-scale=1"><title>Admin-ELIDENS</title>
+<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet"href="style1.css">
+</head>
+<body>
+<header><nav class="navbar"><a href="#"class="nav-logo"><h2>🕊 ELIDENS</h2></a>
+<ul class="nav-menu">
+<li><a href="index.html">Home</a></li>
+<li><a href="Gallery.html">Gallery</a></li>
+<li><a href="admin.html"class="active">Admin</a></li>
+</ul></nav></header>
+
+<div class="admin-container">
+<h1>🔐 Admin Dashboard</h1>
+<div class="admin-section">
+<h2>➕ Create New Post</h2>
+<form id="createPostForm"class="create-post-form">
+<div class="form-group"><label for="postTitle">Post Title:</label><input type="text"id="postTitle"placeholder="e.g., School Events"required></div>
+<div class="form-group"><label for="postContent">Post Description:</label><textarea id="postContent"placeholder="Write description..."rows="4"required></textarea></div>
+<div class="form-group"><label for="mediaType">Media Type:</label>
+<select id="mediaType"onchange="toggleMediaInput()">
+<option value="none">No Media</option>
+<option value="image">Image</option>
+<option value="video">Video</option>
+</select></div>
+<div id="imageInputGroup" class="form-group hidden">
+	<label for="mediaImage">Select Image File:</label>
+	<input type="file" id="mediaImage" accept="image/*">
+</div>
+<div id="videoInputGroup" class="form-group hidden">
+	<label for="mediaVideo">Select Video File:</label>
+	<input type="file" id="mediaVideo" accept="video/*">
+</div>
+<div class="form-group"><label for="authorName">Author/Category:</label><input type="text"id="authorName"placeholder="e.g., School Events"required></div>
+<button type="submit"class="btn btn-create"><i class="fas fa-plus"></i>Create Post</button>
+</form></div>
+
+<div class="admin-section">
+<h2>📝 All Comments</h2>
+<div class="tabs">
+<button class="tab-btn active" onclick="filterComments('all', event)">All Comments</button>
+<button class="tab-btn" onclick="filterComments('flagged', event)">🚩 Flagged</button>
+</div>
+<div id="comments-list"class="comments-admin-list"></div>
+</div>
+
+<div class="admin-section">
+<h2>📸 Gallery Posts</h2>
+<div id="gallery-posts-list"class="gallery-posts-admin"></div>
+</div>
+</div>
+
+<footer class="end"></footer>
+<script type="module">
+import { db } from './firebase-config.js';
+import { collection, doc, getDocs, deleteDoc, updateDoc, setDoc, onSnapshot, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getTimeAgo, createUser, fileToDataURL } from './utils.js';
+
+let allComments = [];
+let currentFilter = 'all';
+
+const loadAllComments = () => onSnapshot(collection(db, 'comments'), snapshot => {
+	allComments = [];
+	snapshot.forEach(d => allComments.push({ id: d.id, ...d.data() }));
+	displayComments();
+});
+
+function displayComments() {
+	const c = document.getElementById('comments-list');
+	c.innerHTML = '';
+	const f = currentFilter === 'flagged' ? allComments.filter(cm => cm.flagged) : allComments;
+	if (f.length === 0) {
+		c.innerHTML = '<p class="no-data">No comments found</p>';
+		return;
+	}
+	f.forEach(cm => {
+		const div = document.createElement('div');
+		div.className = 'comment-admin' + (cm.flagged ? ' flagged' : '');
+		div.innerHTML = `<div class="comment-admin-header"><h4>${cm.userName}</h4><span class="post-label">${cm.postId}</span>${cm.flagged ? '<span class="flag-badge">🚩 Flagged</span>' : ''}</div><p class="comment-text">${cm.text}</p><div class="comment-admin-actions">${!cm.flagged ? `<button class="btn btn-flag" onclick="flagComment('${cm.id}')"><i class="fas fa-flag"></i>Flag</button>` : `<button class="btn btn-unflag" onclick="unflagComment('${cm.id}')"><i class="fas fa-check"></i>Unflag</button>`}<button class="btn btn-delete" onclick="deleteCommentAdmin('${cm.id}')"><i class="fas fa-trash"></i>Delete</button></div>`;
+		c.appendChild(div);
+	});
+}
+
+const loadGalleryPosts = () => onSnapshot(collection(db, 'gallery-posts'), async snapshot => {
+	const c = document.getElementById('gallery-posts-list');
+	c.innerHTML = '';
+	if (snapshot.empty) {
+		c.innerHTML = '<p class="no-data">No posts yet</p>';
+		return;
+	}
+	await Promise.all(snapshot.docs.map(async d => {
+		const data = d.data();
+		const cnt = await getDocs(query(collection(db, 'comments'), where('postId', '==', data.id)));
+		const div = document.createElement('div');
+		div.className = 'post-admin';
+		const cr = data.createdAt?.toDate?.() ?? new Date();
+		div.innerHTML = `<div class="post-admin-header"><h3>${data.title}</h3><span class="date-badge">${cr.toLocaleDateString()}</span></div><p class="post-author">By: ${data.author}</p><p class="post-description">${data.content}</p>${data.mediaUrl ? `<p class="media-info">📎 ${data.mediaType.toUpperCase()}</p>` : ''}<div class="post-stats-admin"><span>👍 ${data.likes || 0} Likes</span><span>💬 ${cnt.size} Comment${cnt.size !== 1 ? 's' : ''}</span></div><div class="post-admin-actions"><button class="btn btn-delete" onclick="deletePost('${d.id}')"><i class="fas fa-trash"></i>Delete</button></div>`;
+		c.appendChild(div);
+	}));
+});
+
+window.toggleMediaInput = () => {
+	const m = document.getElementById('mediaType').value;
+	document.getElementById('imageInputGroup').classList.toggle('hidden', m !== 'image');
+	document.getElementById('videoInputGroup').classList.toggle('hidden', m !== 'video');
+};
+
+window.filterComments = (f, ev) => {
+	currentFilter = f;
+	document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+	const target = ev?.target || null;
+	if (target) target.classList.add('active');
+	displayComments();
+};
+
+window.flagComment = async cid => {
+	try {
+		await updateDoc(doc(db, 'comments', cid), { flagged: true, flaggedAt: new Date() });
+		alert('Comment flagged');
+	} catch (e) {
+		alert('Error: ' + e.message);
+	}
+};
+
+window.unflagComment = async cid => {
+	try {
+		await updateDoc(doc(db, 'comments', cid), { flagged: false });
+		alert('Comment unflagged');
+	} catch (e) {
+		alert('Error: ' + e.message);
+	}
+};
+
+window.deleteCommentAdmin = async cid => {
+	if (!confirm('Delete this comment?')) return;
+	try {
+		await deleteDoc(doc(db, 'comments', cid));
+		alert('Deleted');
+	} catch (e) {
+		alert('Error: ' + e.message);
+	}
+};
+
+window.deletePost = async pid => {
+	if (!confirm('Delete post and comments?')) return;
+	try {
+		await deleteDoc(doc(db, 'gallery-posts', pid));
+		const q = query(collection(db, 'comments'), where('postId', '==', pid));
+		(await getDocs(q)).docs.forEach(d => deleteDoc(d.ref));
+		alert('Post deleted');
+	} catch (e) {
+		alert('Error: ' + e.message);
+	}
+};
+
+document.getElementById('createPostForm').addEventListener('submit', async e => {
+	e.preventDefault();
+	const title = document.getElementById('postTitle').value;
+	const content = document.getElementById('postContent').value;
+	const mediaType = document.getElementById('mediaType').value;
+	const author = document.getElementById('authorName').value;
+	let mediaUrl = null;
+	try {
+		if (mediaType === 'image' && document.getElementById('mediaImage').files[0])
+			mediaUrl = await fileToDataURL(document.getElementById('mediaImage').files[0]);
+		if (mediaType === 'video' && document.getElementById('mediaVideo').files[0])
+			mediaUrl = await fileToDataURL(document.getElementById('mediaVideo').files[0]);
+		const id = 'post_' + Date.now();
+		await setDoc(doc(db, 'gallery-posts', id), { id, title, content, author, mediaType, mediaUrl, likes: 0, likedBy: [], createdAt: serverTimestamp() });
+		alert('✅ Post created!');
+		document.getElementById('createPostForm').reset();
+		document.getElementById('imageInputGroup').classList.add('hidden');
+		document.getElementById('videoInputGroup').classList.add('hidden');
+	} catch (err) {
+		alert('❌ Error: ' + err.message);
+		console.error(err);
+	}
+});
+
+loadAllComments();
+loadGalleryPosts();
+</script>
+</script>
+</body>
+</html>
