@@ -3,27 +3,33 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport"content="width=device-width,initial-scale=1"><title>Gallery-ELIDENS</title>
 <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet"href="style1.css">
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<header><nav class="navbar"><a href="#"class="nav-logo"><h2>🕊 ELIDENS</h2></a>
-<ul class="nav-menu">
-<li><a href="index.html">Home</a></li>
-<li><a href="about.html">About</a></li>
-<li><a href="Sections.html">Sections</a></li>
-<li><a href="Gallery.html"class="active">Gallery</a></li>
-<li><a href="Contact.html">Contact</a></li>
-</ul></nav></header>
+<header>
+    <nav class="navbar content">
+        <a href="#" class="nav-logo">
+            <h2 class="logo-text">🕊 ELIDENS</h2>
+        </a>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html">Home</a></li>
+            <li class="nav-item"><a href="about.html">About</a></li>
+            <li class="nav-item"><a href="Sections.html">Sections</a></li>
+            <li class="nav-item"><a href="Gallery.html" class="active">Gallery</a></li>
+            <li class="nav-item"><a href="Contact.html">Contact</a></li>
+        </ul>
+    </nav>
+</header>
 
 <div class="gallery-container">
-<div class="gallery-banner"><img src="Images/g.png"alt="Gallery Banner"class="banner-image"></div>
+<div class="gallery-banner"><img src="images/g.png" alt="Gallery Banner" class="banner-image"></div>
 <div class="gallery-title-section"><h1>📸 School Gallery</h1><p>Share memories and moments</p></div>
 <div class="gallery-posts"id="dynamic-posts"></div>
 </div>
 
 <footer class="end"></footer>
 <script type="module">
-import{db}from'./firebase-config.js';import{collection,doc,getDoc,setDoc,updateDoc,deleteDoc,onSnapshot,getDocs,query,where,orderBy,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";import{getTimeAgo,createUser,fileToDataURL}from'./utils.js';const currentUser=createUser();let posts=[];
+import { db } from './js/firebase-config.js';import{collection,doc,getDoc,setDoc,updateDoc,deleteDoc,onSnapshot,getDocs,query,where,orderBy,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";import { getTimeAgo, createUser, fileToDataURL } from './js/utils.js';const currentUser=createUser();let posts=[];
 const postsRef = collection(db, 'gallery-posts');
 const postsQuery = query(postsRef, orderBy('createdAt', 'desc'));
 const loadPosts = () => onSnapshot(postsQuery, s => { posts = []; s.forEach(d => posts.push({ id: d.id, ...d.data() })); displayPosts(); });
@@ -41,7 +47,7 @@ const displayPosts = () => {
 				? `<div class="post-media video-post"><video controls class="media-video"><source src="${p.mediaUrl}" type="video/mp4"></video></div>`
 				: '';
 		const liked = p.likedBy?.includes(currentUser);
-		const authorImg = 'Images/gallery.avif';
+		const authorImg = 'images/gallery.avif';
 		el.innerHTML = `
 			<div class="post-header">
 				<div class="post-author">

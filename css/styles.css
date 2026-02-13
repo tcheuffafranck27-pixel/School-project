@@ -90,6 +90,61 @@ footer{
     display: inline-block;
     transition: all 0.3s ease;
 }
+
+/* ===== HOME PAGE HERO SECTION ===== */
+.brief {
+    min-height: 100vh;
+    background-color: #006400;
+    padding: 0 0 0 50px;
+}
+.brief .brief-content {
+    display: flex;
+    align-items: center;
+    color: var(--bg-color);
+    justify-content: space-between;
+    min-height: 100vh;
+}
+.brief .brief-details .title {
+    color: var(--accent-color);
+    font-family: 'Bebas Neue', 'Montserrat', sans-serif;
+    font-size: 30px;
+}
+.brief .brief-details .title-2 {
+    font-size: 24px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+.brief .brief-details .description {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--bg-color);
+    max-width: 500px;
+}
+.brief .brief-image-logo {
+    text-align: center;
+    max-width: 500px;
+}
+.brief .brief-image-logo .brief-image {
+    max-width: 400px;
+    margin: 0 auto;
+}
+.brief .brief-info a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: var(--accent-color);
+    color: var(--bg-color);
+    border-radius: 30px;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+.brief .brief-info a:hover {
+    background-color: var(--bg-color);
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
+}
+
 .image-content{
     width: 110%;
     height: 50%;
@@ -101,12 +156,10 @@ footer{
     align-items: center;
     margin-left:0px ;
 }
-.brief-image{
-    display: flex;
-    text-align:center ;
-    justify-content: center;
-    max-width: 400px;
-    margin-left: 500Px;
+/* Standalone brief-image (e.g. Contact page logo) */
+.content .brief-image {
+    max-width: 200px;
+    margin: 20px auto;
 }
 header a:focus{
      background: rgb(8, 50, 185); 
@@ -1115,4 +1168,3 @@ body {
         height: 250px;
     }
 }
-
