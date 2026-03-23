@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admissions - ELIDENS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar content">
+            <a href="#" class="nav-logo">
+                <h2 class="logo-text">🕊 ELIDENS</h2>
+            </a>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="home">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="about">About</a></li>
+                <li class="nav-item"><a href="Sections.html" class="sections">Sections</a></li>
+                <li class="nav-item"><a href="admissions.html" class="admissions active">Admissions</a></li>
+                <li class="nav-item"><a href="facilities.html" class="facilities">Facilities</a></li>
+                <li class="nav-item"><a href="news.html" class="news">News</a></li>
+                <li class="nav-item"><a href="Gallery.html" class="Gallery">Gallery</a></li>
+                <li class="nav-item"><a href="Contact.html" class="contact">Contact</a></li>
+                <li><a href="login.html" class="btn">Login</a></li>
+                <li><a href="#" onclick="logout()" class="btn">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-container">
+         <!-- Banner Section -->
+        <div class="page-banner">
+            <div class="page-hero">
+              <img src="images/about.jpg" alt="Sections Banner" class="banner-image">
+             <div class="page-hero-text">
+                <h1>🎓 Admissions</h1>
+             </div>
+        </div>
+
+        <div class="page-title-section">
+            <h1>🎓 Admissions</h1>
+            <p>Join our vibrant learning community</p>
+        </div>
+        <div class="page-content">
+            <div class="admissions-content">
+                <div class="admissions-process">
+                    <h2>Admission Process</h2>
+                    <div class="process-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <h3>Online Application</h3>
+                            <p>Complete our secure online form. No application fee.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <h3>Assessment Test</h3>
+                            <p>Age-appropriate evaluation (45-60 mins).</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <h3>Family Interview</h3>
+                            <p>Meet our admissions team (30 mins).</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <h3>Offer & Enrollment</h3>
+                            <p>Receive offer within 48 hours. Secure your place!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="requirements">
+                    <h2>Requirements by Section</h2>
+                    <div class="requirements-grid">
+
+                        <div class="requirement-card">
+<h3>Collège (Forms 1-5)</h3>
+                            <ul>
+<li>Previous school reports (last 2 terms)</li>
+                                <li>Entrance test in Maths/English/Français</li>
+                                <li>Birth certificate copy</li>
+                                <li>2 passport-sized photos</li>
+                            </ul>
+                        </div>
+                        <div class="requirement-card">
+<h3>High School (Form 5, Lower/Upper Sixth)</h3>
+                            <ul>
+<li>GCE Ordinary Level results (for Form 5)</li>
+                                <li>GCE Ordinary Level results or entrance exam (for Lower Sixth)</li>
+                                <li>Interview with Principal</li>
+                                <li>Previous transcripts</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deadlines-fees">
+                    <h2>Important Dates & Fees</h2>
+                    <div class="deadlines-grid">
+                        <div class="deadline-item">
+<h4>2025/2026 Admissions (September Start)</h4>
+                            <ul>
+                                <li><strong>Early Registration:</strong> January - March</li>
+                                <li><strong>Regular:</strong> April - June</li>
+                                <li><strong>Late:</strong> July (limited spaces)</li>
+                            </ul>
+                        </div>
+                        <div class="deadline-item">
+<h4>Annual Fees (2025/2026)</h4>
+                            <ul>
+<li>Collège (Forms 1-5): 2,000,000 CFA/year</li>
+<li>High School (Lower/Upper Sixth): 2,500,000 CFA/year</li>
+                                <li>Financial aid & scholarships available</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admissions-form">
+                    <h2>Start Your Application</h2>
+                    <form class="contact-form">
+                        <div class="form-group">
+                            <label>Student Name</label>
+                            <input type="text" placeholder="Full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Grade Applying For</label>
+                            <select>
+                                <option>Form 1 (Collège)</option>
+                                <option>Form 2 (Collège)</option>
+                                <option>Form 3 (Collège)</option>
+                                <option>Form 4 (Collège)</option>
+                                <option>Form 5 (GCE O-Level)</option>
+                                <option>Lower Sixth (GCE A-Level)</option>
+                                <option>Upper Sixth (GCE A-Level)</option>
+                                <option>Select Stream: Sciences / Commerce / Littéraire</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Parent Email</label>
+                            <input type="email" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" placeholder="+1-234-567-8900">
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea placeholder="Tell us about your child and why ELIDENS..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-cta">Submit Application <i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+
+                <div class="faq">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="faq-item">
+                        <h3>Do you offer financial aid?</h3>
+                        <p>Yes, merit and need-based scholarships available. 30% of students receive assistance.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>What is the class size?</h3>
+                        <p>Average 18 students per class with 12:1 student-teacher ratio overall.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>When should I apply?</h3>
+                        <p>Applications accepted year-round, but apply by February for September start. Waitlists exist.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="end"></footer>
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+        if (mobileMenu) {
+            mobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+        document.querySelector('.contact-form').addEventListener('submit', e => {
+            e.preventDefault();
+            alert('Thank you for your application! We will contact you within 48 hours.');
+        });
+    </script>
+</body>
+</html>

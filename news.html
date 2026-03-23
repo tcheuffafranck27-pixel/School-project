@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News & Events - ELIDENS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar content">
+            <a href="#" class="nav-logo">
+                <h2 class="logo-text">🕊 ELIDENS</h2>
+            </a>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="home">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="about">About</a></li>
+                <li class="nav-item"><a href="Sections.html" class="sections">Sections</a></li>
+                <li class="nav-item"><a href="admissions.html" class="admissions active">Admissions</a></li>
+                <li class="nav-item"><a href="facilities.html" class="facilities">Facilities</a></li>
+                <li class="nav-item"><a href="news.html" class="news">News</a></li>
+                <li class="nav-item"><a href="Gallery.html" class="Gallery">Gallery</a></li>
+                <li class="nav-item"><a href="Contact.html" class="contact">Contact</a></li>
+                <li><a href="login.html" class="btn">Login</a></li>
+            </ul>
+           
+        </nav>
+        <!-- Global Login Modal -->
+       
+    </header>
+
+    <div class="page-container">
+         <!-- Banner Section -->
+        <div class="page-banner">
+            <div class="page-hero">
+              <img src="images/about.jpg" alt="Sections Banner" class="banner-image">
+             <div class="page-hero-text">
+                <h1>📰 News & Events</h1>
+             </div>
+        </div>
+           
+        <div class="page-title-section">
+           <h1>📰 News & Events</h1>
+            <p>Stay updated with the latest happenings at ELIDENS</p>
+        </div>
+        <div class="page-content">
+            <div class="news-container">
+                <div class="news-posts" id="dynamic-news"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="end"></footer>
+    
+    <!-- Global Auth Script -->
+    <script type="module">
+        import { initAuth, auth } from './js/firebase-config.js';
+        import { getStoredEmail } from './js/utils.js';
+        
+        // Global functions (shared with index.html)
+        window.showLoginModal = () => document.getElementById('loginModal')?.classList.add('show');
+        window.closeModal = () => document.getElementById('loginModal')?.classList.remove('show');
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth((user) => {
+                const statusEl = document.getElementById('authStatus');
+                if (statusEl) {
+                    if (user) {
+                        statusEl.textContent = `Hi, ${user.displayName || user.email}`;
+                        statusEl.className = 'auth-status';
+                        statusEl.onclick = async () => await auth.signOut();
+                    } else {
+                        statusEl.textContent = 'Login';
+                        statusEl.className = 'auth-status login-required';
+                        statusEl.onclick = showLoginModal;
+                    }
+                }
+            });
+            
+            const storedEmail = getStoredEmail();
+            if (storedEmail) {
+                const loginEmail = document.getElementById('loginEmail');
+                const signupEmail = document.getElementById('signupEmail');
+                if (loginEmail) loginEmail.value = storedEmail;
+                if (signupEmail) signupEmail.value = storedEmail;
+            }
+            
+            // Modal handlers
+            document.getElementById('closeModal')?.onclick = closeModal;
+            document.getElementById('loginModal')?.onclick = (e) => {
+                if (e.target === document.getElementById('loginModal')) closeModal();
+            };
+            
+            document.getElementById('loginForm')?.onsubmit = async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                const btn = e.target.querySelector('.login-submit');
+                btn.disabled = true;
+                btn.textContent = 'Logging in...';
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    closeModal();
+                } catch (error) {
+                    document.getElementById('loginError').textContent = error.message;
+                    document.getElementById('loginError').classList.add('show');
+                }
+                btn.disabled = false;
+                btn.textContent = 'Log In';
+            };
+            
+            document.getElementById('signupForm')?.onsubmit = async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('signupEmail').value;
+                const name = document.getElementById('signupName').value;
+                const password = document.getElementById('signupPassword').value;
+                const btn = e.target.querySelector('.login-submit');
+                btn.disabled = true;
+                btn.textContent = 'Creating...';
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    await userCredential.user.updateProfile({ displayName: name });
+                    closeModal();
+                } catch (error) {
+                    document.getElementById('loginError').textContent = error.message;
+                    document.getElementById('loginError').classList.add('show');
+                }
+                btn.disabled = false;
+                btn.textContent = 'Create Account';
+            };
+        });
+        
+        // Define switchTab if not defined
+        window.switchTab = window.switchTab || ((tab) => {
+            document.querySelectorAll('.login-tab').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.login-form').forEach(form => form.classList.remove('active'));
+            event.target.classList.add('active');
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+                document.getElementById('modalTitle').textContent = 'Login to ELIDENS';
+                document.getElementById('switchLink').innerHTML = '<span>or </span><a href="#" onclick="switchTab(\'signup\')">create account</a>';
+            } else {
+                document.getElementById('signupForm').classList.add('active');
+                document.getElementById('modalTitle').textContent = 'Create Account';
+                document.getElementById('switchLink').innerHTML = '<span>or </span><a href="#" onclick="switchTab(\'login\')">login</a>';
+            }
+        });
+    </script>
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+        if (mobileMenu) {
+            mobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+    </script>
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import { collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { getTimeAgo, createUser } from './js/utils.js';
+        const currentUser = createUser();
+        let posts = [];
+        const postsRef = collection(db, 'news-posts');
+        const postsQuery = query(postsRef, orderBy('createdAt', 'desc'));
+        const loadPosts = () => onSnapshot(postsQuery, s => { 
+            posts = []; 
+            s.forEach(d => posts.push({ id: d.id, ...d.data() })); 
+            displayPosts(); 
+        });
+        const displayPosts = () => {
+            const c = document.getElementById('dynamic-news');
+            c.innerHTML = posts.length ? '' : '<p style="text-align:center;color:#6c7a92;padding:40px">No news posts yet. Check back soon!</p>';
+            posts.forEach(p => {
+                const el = document.createElement('div');
+                el.className = 'news-post';
+                el.setAttribute('data-post-id', p.id);
+                const t = getTimeAgo(p.createdAt?.toDate?.() || new Date());
+                el.innerHTML = `
+                    <div class="news-header">
+                        <h3>${p.title}</h3>
+                        <span class="news-date">${t}</span>
+                    </div>
+                    <div class="news-content">
+                        <p>${p.content}</p>
+                    </div>
+                `;
+                c.appendChild(el);
+            });
+        };
+        loadPosts();
+    </script>
+</body>
+</html>

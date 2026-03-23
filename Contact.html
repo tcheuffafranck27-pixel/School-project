@@ -13,29 +13,34 @@
             <a href="#" class="nav-logo">
                 <h2 class="logo-text">🕊 ELIDENS</h2>
             </a>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
             <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="index.html" class="home">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="about.html" class="about">About</a>
-                </li>
-                <li class="nav-item">
-                    <a href="Sections.html" class="sections">Sections</a>
-                </li>
-                <li class="nav-item">
-                    <a href="Gallery.html" class="Gallery">Gallery</a>
-                </li>
-                <li class="nav-item">
-                    <a href="Contact.html" class="contact active">Contact</a>
-                </li>
+               <li class="nav-item"><a href="index.html" class="home">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="about">About</a></li>
+                <li class="nav-item"><a href="Sections.html" class="sections">Sections</a></li>
+                <li class="nav-item"><a href="admissions.html" class="admissions active">Admissions</a></li>
+                <li class="nav-item"><a href="facilities.html" class="facilities">Facilities</a></li>
+                <li class="nav-item"><a href="news.html" class="news">News</a></li>
+                <li class="nav-item"><a href="Gallery.html" class="Gallery">Gallery</a></li>
+                <li class="nav-item"><a href="Contact.html" class="contact">Contact</a></li>
+                <li><a href="login.html" class="btn">Login</a></li>
+                <li><a href="#" onclick="logout()" class="btn">Logout</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="page-container">
+         <!-- Banner Section -->
         <div class="page-banner">
-            <img src="images/about.jpg" alt="Contact Banner" class="banner-image">
+            <div class="page-hero">
+              <img src="images/about.jpg" alt="Sections Banner" class="banner-image">
+             <div class="page-hero-text">
+                <h1>📞 Contact Us</h1>
+             </div>
         </div>
 
         <div class="page-title-section">
@@ -50,20 +55,50 @@
 
             <div class="about-text-section">
                 <h2>Visit Us</h2>
-                <p><i class="fas fa-map-marker-alt"></i> <strong>Address:</strong> [Add your school address here]</p>
-                <p><i class="fas fa-phone"></i> <strong>Phone:</strong> [Add your phone number]</p>
-                <p><i class="fas fa-envelope"></i> <strong>Email:</strong> [Add your email address]</p>
+                <p><i class="fas fa-map-marker-alt"></i> <strong>Address:</strong> 123 ELIDENS Avenue, Education City, CA 90210</p>
+                <p><i class="fas fa-phone"></i> <strong>Phone:</strong> +1 (555) 123-4567</p>
+                <p><i class="fas fa-envelope"></i> <strong>Email:</strong> info@elidens.edu</p>
 
                 <h2>Office Hours</h2>
                 <p>Monday – Friday: 8:00 AM – 4:00 PM</p>
                 <p>Saturday: 9:00 AM – 12:00 PM</p>
 
+                <h2>📝 Contact Form</h2>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="contactName">Name:</label>
+                        <input type="text" id="contactName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Email:</label>
+                        <input type="email" id="contactEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactMessage">Message:</label>
+                        <textarea id="contactMessage" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+
+                <h2>🗺️ Location Map</h2>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3305.123456789!2d-122.4194!3d37.7749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDQ2JzI5LjQiTiAxMjLCsDI1JzA5LjkiVw!5e0!3m2!1sen!2sus!4v1234567890" width="100%" height="400" style="border:0; border-radius: 12px;" allowfullscreen="" loading="lazy"></iframe>
+
                 <h2>Have Questions?</h2>
-                <p>We welcome inquiries from parents and students. Feel free to visit us during office hours or reach out by phone or email. Our staff is happy to help with admissions, enrollment, and any other questions you may have.</p>
+                <p>We welcome inquiries from parents and students. Feel free to visit us during office hours or reach out by phone or email. Our staff is happy to help with <a href="admissions.html">admissions</a>, enrollment, and any other questions you may have.</p>
             </div>
         </div>
     </div>
 
     <footer class="end"></footer>
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+        if (mobileMenu) {
+            mobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+    </script>
 </body>
 </html>

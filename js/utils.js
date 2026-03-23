@@ -1,7 +1,9 @@
 /**
  * Utility functions for ELIDENS Gallery
- * Used for time formatting, user creation, and file handling
+ * Used for time formatting, auth-aware user ID, file handling
  */
+
+import { auth, isLoggedIn, getCurrentUserId } from './firebase-auth.js';
 
 /**
  * Converts a timestamp to a human-readable "time ago" string
@@ -24,11 +26,37 @@ export function getTimeAgo(date) {
 }
 
 /**
- * Creates a unique anonymous user ID for commenting
- * @returns {string} - e.g. "Anonymous_abc123xyz"
+ * Get current user ID - Firebase UID if logged in, null otherwise
+ * @returns {string|null} - Firebase UID or null
  */
-export function createUser() {
-  return "Anonymous_" + Math.random().toString(36).substr(2, 9);
+export function getCurrentUserId() {
+  if (isLoggedIn()) {
+    return auth.currentUser.uid;
+  }
+  return null;
+}
+
+/**
+ * Check if user can interact (logged in)
+ */
+export function canInteract() {
+  return isLoggedIn();
+}
+
+/**
+ * Get fallback email from cookie if no auth
+ */
+export function getStoredEmail() {
+  const name = 'elidens_email=';
+  const decoded = decodeURIComponent(document.cookie);
+  const ca = decoded.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i].trim();
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
 }
 
 /**

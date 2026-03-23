@@ -4,6 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport"content="width=device-width,initial-scale=1"><title>Gallery-ELIDENS</title>
 <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="css/styles.css">
+    
 </head>
 <body>
 <header>
@@ -11,12 +12,21 @@
         <a href="#" class="nav-logo">
             <h2 class="logo-text">🕊 ELIDENS</h2>
         </a>
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
         <ul class="nav-menu">
-            <li class="nav-item"><a href="index.html">Home</a></li>
-            <li class="nav-item"><a href="about.html">About</a></li>
-            <li class="nav-item"><a href="Sections.html">Sections</a></li>
-            <li class="nav-item"><a href="Gallery.html" class="active">Gallery</a></li>
-            <li class="nav-item"><a href="Contact.html">Contact</a></li>
+         <li class="nav-item"><a href="index.html" class="home">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="about">About</a></li>
+                <li class="nav-item"><a href="Sections.html" class="sections">Sections</a></li>
+                <li class="nav-item"><a href="admissions.html" class="admissions active">Admissions</a></li>
+                <li class="nav-item"><a href="facilities.html" class="facilities">Facilities</a></li>
+                <li class="nav-item"><a href="news.html" class="news">News</a></li>
+                <li class="nav-item"><a href="Gallery.html" class="Gallery">Gallery</a></li>
+                <li class="nav-item"><a href="Contact.html" class="contact">Contact</a></li>
+                <li><a href="login.html" class="btn">Login</a></li>
         </ul>
     </nav>
 </header>
@@ -28,8 +38,134 @@
 </div>
 
 <footer class="end"></footer>
+<script>
+const mobileMenu = document.getElementById('mobile-menu');
+const navMenu = document.querySelector('.nav-menu');
+if (mobileMenu) {
+    mobileMenu.addEventListener('click', () => {
+        mobileMenu.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
+</script>
 <script type="module">
-import { db } from './js/firebase-config.js';import{collection,doc,getDoc,setDoc,updateDoc,deleteDoc,onSnapshot,getDocs,query,where,orderBy,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";import { getTimeAgo, createUser, fileToDataURL } from './js/utils.js';const currentUser=createUser();let posts=[];
+import { db, initAuth } from './js/firebase-config.js';
+import { collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getTimeAgo, getCurrentUserId, canInteract } from './js/utils.js';
+
+let posts = [];
+let currentUserId = null;
+const loginModal = document.getElementById('loginModal');
+const closeModalBtn = document.getElementById('closeModal');
+const loginForm = document.getElementById('loginForm');
+const signupForm = document.getElementById('signupForm');
+
+// Init auth
+initAuth((user) => {
+  currentUserId = user ? user.uid : null;
+  document.body.dataset.authenticated = user ? 'true' : 'false';
+  updateAuthStatus(user);
+  if (user) {
+    closeModal();
+  }
+});
+
+// Pre-fill stored email
+const storedEmail = getStoredEmail();
+if (storedEmail) {
+  document.getElementById('loginEmail').value = storedEmail;
+  document.getElementById('signupEmail').value = storedEmail;
+}
+
+// Modal controls
+closeModalBtn.onclick = closeModal;
+loginModal.onclick = (e) => { if (e.target === loginModal) closeModal(); };
+function closeModal() { loginModal.classList.remove('show'); }
+
+function switchTab(tab) {
+  document.querySelectorAll('.login-tab').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.login-form').forEach(form => form.classList.remove('active'));
+  event.target.classList.add('active');
+  if (tab === 'login') {
+    loginForm.classList.add('active');
+    document.getElementById('modalTitle').textContent = 'Login to interact';
+    document.getElementById('switchLink').innerHTML = '<span>or </span><a href="#" onclick="switchTab(\'signup\')">create account</a>';
+  } else {
+    signupForm.classList.add('active');
+    document.getElementById('modalTitle').textContent = 'Create Account';
+    document.getElementById('switchLink').innerHTML = '<span>or </span><a href="#" onclick="switchTab(\'login\')">login</a>';
+  }
+}
+
+// Auth handlers
+loginForm.onsubmit = async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const btn = e.target.querySelector('.login-submit');
+  btn.disabled = true;
+  btn.textContent = 'Logging in...';
+  const { success, error } = await login(email, password);
+  if (!success) {
+    document.getElementById('loginError').textContent = error;
+    document.getElementById('loginError').style.display = 'block';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Login';
+};
+
+signupForm.onsubmit = async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('signupEmail').value;
+  const name = document.getElementById('signupName').value;
+  const password = document.getElementById('signupPassword').value;
+  const btn = e.target.querySelector('.login-submit');
+  btn.disabled = true;
+  btn.textContent = 'Creating...';
+  const { success, error } = await signup(email, password, name);
+  if (!success) {
+    document.getElementById('loginError').textContent = error;
+    document.getElementById('loginError').style.display = 'block';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Create Account';
+};
+
+window.logoutUser = async () => {
+  const result = await logout();
+  if (result.success) {
+    console.log('Logged out');
+  }
+};
+
+function updateAuthStatus(user) {
+  const statusEl = document.getElementById('authStatus');
+  if (statusEl) {
+    if (user) {
+      statusEl.textContent = `Hi, ${user.displayName || user.email}`;
+      statusEl.className = 'auth-status';
+      statusEl.onclick = logoutUser;
+    } else {
+      statusEl.textContent = 'Login';
+      statusEl.className = 'auth-status login-required';
+      statusEl.onclick = () => loginModal.classList.add('show');
+    }
+  }
+  // Update all action buttons
+  document.querySelectorAll('.action-btn.like, .action-btn.comment').forEach(btn => {
+    if (!canInteract()) {
+      btn.classList.add('disabled');
+    } else {
+      btn.classList.remove('disabled');
+    }
+  });
+}
+
+// Show login status
+const authStatus = document.createElement('div');
+authStatus.id = 'authStatus';
+authStatus.className = 'auth-status login-required';
+document.body.appendChild(authStatus);
 const postsRef = collection(db, 'gallery-posts');
 const postsQuery = query(postsRef, orderBy('createdAt', 'desc'));
 const loadPosts = () => onSnapshot(postsQuery, s => { posts = []; s.forEach(d => posts.push({ id: d.id, ...d.data() })); displayPosts(); });
@@ -68,8 +204,8 @@ const displayPosts = () => {
 				<span class="comment-count" data-post-id="${p.id}">0 Comments</span>
 			</div>
 			<div class="post-actions">
-				<button class="action-btn${liked ? ' liked' : ''}" onclick="toggleLike(this,'${p.id}')">${liked ? '<i class="fas fa-thumbs-up"></i> Liked' : '<i class="far fa-thumbs-up"></i> Like'}</button>
-				<button class="action-btn" onclick="toggleCommentBox(this,'${p.id}')"><i class="far fa-comment"></i> Comment</button>
+<button class="action-btn like${liked ? ' liked' : ''}${!canInteract() ? ' disabled' : ''}" onclick="${canInteract() ? `toggleLike(this,'${p.id}')` : `showLoginModal()`}">${liked ? '<i class="fas fa-thumbs-up"></i> Liked' : '<i class="far fa-thumbs-up"></i> Like'}</button>
+				<button class="action-btn comment${!canInteract() ? ' disabled' : ''}" onclick="${canInteract() ? `toggleCommentBox(this,'${p.id}')` : `showLoginModal()`}"><i class="far fa-comment"></i> ${canInteract() ? 'Comment' : 'Login to comment'}</button>
 				<button class="action-btn"><i class="fas fa-share"></i> Share</button>
 			</div>
 			<div class="comments-section hidden" id="comments-${p.id}">
@@ -145,7 +281,7 @@ const loadLikesForPost = postId => {
 		if (likesEl) likesEl.innerHTML = `<i class="fas fa-thumbs-up" style="color:#2aae2a"></i> ${d.likes || 0} Likes`;
 		const btn = post.querySelector('.post-actions .action-btn');
 		if (!btn) return;
-		if (d.likedBy?.includes(currentUser)) {
+if (currentUserId && d.likedBy?.includes(currentUserId)) {
 			btn.classList.add('liked');
 			btn.innerHTML = '<i class="fas fa-thumbs-up"></i> Liked';
 		} else {
@@ -154,12 +290,83 @@ const loadLikesForPost = postId => {
 		}
 	});
 };
-window.toggleLike=async(btn,pid)=>{try{const ref=doc(db,'gallery-posts',pid),snap=await getDoc(ref),d=snap.data(),newLikes=d.likes||0,newLiked=[...(d.likedBy||[])];if(newLiked.includes(currentUser)){newLiked.splice(newLiked.indexOf(currentUser),1);await updateDoc(ref,{likes:newLikes-1,likedBy:newLiked})}else{newLiked.push(currentUser);await updateDoc(ref,{likes:newLikes+1,likedBy:newLiked})}}catch(e){alert('Error: '+e.message)}};
+window.toggleLike = async (btn, pid) => {
+  if (!canInteract()) {
+    showLoginModal();
+    return;
+  }
+  try {
+    const ref = doc(db, 'gallery-posts', pid);
+    const snap = await getDoc(ref);
+    const d = snap.data();
+    const newLikes = d.likes || 0;
+    const newLiked = [...(d.likedBy || [])];
+    if (newLiked.includes(currentUserId)) {
+      newLiked.splice(newLiked.indexOf(currentUserId), 1);
+      await updateDoc(ref, { likes: newLikes - 1, likedBy: newLiked });
+    } else {
+      newLiked.push(currentUserId);
+      await updateDoc(ref, { likes: newLikes + 1, likedBy: newLiked });
+    }
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+};
+
+window.showLoginModal = () => {
+  loginModal.classList.add('show');
+  document.getElementById('loginError').style.display = 'none';
+};
 window.toggleCommentBox=(btn,pid)=>document.getElementById(`comments-${pid}`).classList.toggle('hidden');
-window.addComment=async(btn,pid)=>{const input=btn.previousElementSibling;const text=input.value.trim();if(!text)return alert('Type a comment');try{await setDoc(doc(collection(db,'comments')),{postId:pid,userName:currentUser.replace('Anonymous_','User'),text,flagged:false,timestamp:serverTimestamp()}),input.value=''}catch(e){alert('Error: '+e.message)}};
-window.deleteComment=async cid=>confirm('Delete?')&&deleteDoc(doc(db,'comments',cid)).then(()=>alert('Deleted')).catch(e=>alert('Error: '+e.message));
-window.editComment=async(cid,text)=>{const newText=prompt('Edit:',text);newText&&newText.trim()&&newText!==text&&updateDoc(doc(db,'comments',cid),{text:newText.trim(),edited:true,editedAt:serverTimestamp()}).then(()=>alert('Updated')).catch(e=>alert('Error: '+e.message))};
-window.flagComment=async cid=>{const ref=doc(db,'comments',cid);const snap=await getDoc(ref);const flagged=snap.data().flagged;updateDoc(ref,{flagged:!flagged}).then(()=>alert(flagged?'Unflagged':'Flagged')).catch(e=>alert('Error: '+e.message))};
+window.addComment = async (btn, pid) => {
+  if (!canInteract()) {
+    showLoginModal();
+    return;
+  }
+  const input = btn.previousElementSibling;
+  const text = input.value.trim();
+  if (!text) return alert('Type a comment');
+  try {
+    await setDoc(doc(collection(db, 'comments')), {
+      postId: pid,
+      userName: auth.currentUser.displayName || auth.currentUser.email || 'User',
+      userId: currentUserId,
+      text,
+      flagged: false,
+      timestamp: serverTimestamp()
+    });
+    input.value = '';
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+};
+window.deleteComment = async (cid) => {
+  if (!canInteract()) return showLoginModal();
+  if (confirm('Delete your comment?')) {
+    await deleteDoc(doc(db, 'comments', cid));
+  }
+};
+
+window.editComment = async (cid, text) => {
+  if (!canInteract()) return showLoginModal();
+  const newText = prompt('Edit comment:', text);
+  if (newText && newText.trim() && newText !== text) {
+    await updateDoc(doc(db, 'comments', cid), {
+      text: newText.trim(),
+      edited: true,
+      editedAt: serverTimestamp()
+    });
+  }
+};
+
+window.flagComment = async (cid) => {
+  if (!canInteract()) return showLoginModal();
+  const ref = doc(db, 'comments', cid);
+  const snap = await getDoc(ref);
+  const flagged = snap.data().flagged;
+  await updateDoc(ref, { flagged: !flagged });
+};
+
 loadPosts();
 </script>
 </body>

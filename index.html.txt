@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elidens Comprehensive College</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<!-- 🔝 NAVBAR -->
+<header class="navbar">
+  <h2 class="logo">ELIDENS</h2>
+  <nav>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="academics.html">Academics</a></li>
+      <li><a href="admission.html">Admissions</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html" class="btn">Login</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- 🎬 HERO SECTION -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Building Future Leaders</h1>
+    <p>Welcome to Elidens Comprehensive College</p>
+    <div class="hero-buttons">
+      <a href="admission.html" class="btn">Apply Now</a>
+      <a href="about.html" class="btn-outline">Learn More</a>
+    </div>
+  </div>
+</section>
+
+<!-- 📊 STATS -->
+<section class="stats">
+  <div class="stat">
+    <h2>1000+</h2>
+    <p>Students</p>
+  </div>
+  <div class="stat">
+    <h2>50+</h2>
+    <p>Teachers</p>
+  </div>
+  <div class="stat">
+    <h2>95%</h2>
+    <p>Success Rate</p>
+  </div>
+</section>
+
+<!-- 📚 PROGRAMS -->
+<section class="programs">
+  <h2>Our Programs</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>Science</h3>
+      <p>Physics, Chemistry, Biology</p>
+    </div>
+    <div class="card">
+      <h3>Arts</h3>
+      <p>Literature, History, Languages</p>
+    </div>
+    <div class="card">
+      <h3>Commercial</h3>
+      <p>Accounting, Economics, Business</p>
+    </div>
+  </div>
+</section>
+
+<!-- 🏆 CTA -->
+<section class="cta">
+  <h2>Join Elidens Today</h2>
+  <a href="admission.html" class="btn">Enroll Now</a>
+</section>
+
+<!-- 🔻 FOOTER -->
+<footer>
+  <p>© 2026 Elidens Comprehensive College</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facilities - ELIDENS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar content">
+            <a href="#" class="nav-logo">
+                <h2 class="logo-text">🕊 ELIDENS</h2>
+            </a>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="home">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="about">About</a></li>
+                <li class="nav-item"><a href="Sections.html" class="sections">Sections</a></li>
+                <li class="nav-item"><a href="admissions.html" class="admissions active">Admissions</a></li>
+                <li class="nav-item"><a href="facilities.html" class="facilities">Facilities</a></li>
+                <li class="nav-item"><a href="news.html" class="news">News</a></li>
+                <li class="nav-item"><a href="Gallery.html" class="Gallery">Gallery</a></li>
+                <li class="nav-item"><a href="Contact.html" class="contact">Contact</a></li>
+                <li><a href="login.html" class="btn">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-container">
+        <!-- Banner Section -->
+        <div class="page-banner">
+            <div class="page-hero">
+              <img src="images/about.jpg" alt="Sections Banner" class="banner-image">
+             <div class="page-hero-text">
+                <h1>🏢 Facilities</h1>
+             </div>
+        </div>
+        <div class="page-title-section">
+            <h1>🏢 Facilities</h1>
+            <p>State-of-the-art learning environment</p>
+        </div>
+        <div class="page-content">
+            <div class="facilities-overview">
+                <p>ELIDENS features modern facilities designed for 21st-century learning. Our 25-acre campus includes specialized learning spaces, sports amenities, and technology integration throughout.</p>
+            </div>
+
+            <div class="facilities-grid">
+                <div class="facility-card">
+                    <i class="fas fa-flask facility-icon"></i>
+                    <h3>Science Laboratories</h3>
+                    <p>Three dedicated labs (Biology, Chemistry, Physics) with modern equipment including microscopes, spectrometers, and dissection stations. Safety-certified for all experiments.</p>
+                    <ul>
+                        <li>20-station capacity each</li>
+                        <li>Digital lab management system</li>
+                        <li>Weekly science club use</li>
+                    </ul>
+                </div>
+
+                <div class="facility-card">
+                    <i class="fas fa-laptop-code facility-icon"></i>
+                    <h3>Technology Center</h3>
+                    <p>60 modern workstations with high-speed internet, robotics lab, and maker space. Coding curriculum from grade 1 through advanced AP Computer Science.</p>
+                    <ul>
+                        <li>1:1 device program</li>
+                        <li>3D printing & laser cutting</li>
+                        <li>VR/AR learning stations</li>
+                    </ul>
+                </div>
+
+                <div class="facility-card">
+                    <i class="fas fa-book-reader facility-icon"></i>
+                    <h3>Learning Resource Center</h3>
+                    <p>25,000+ volume library with digital databases, research stations, and quiet study areas. Open 7 days/week with certified librarians.</p>
+                    <ul>
+                        <li>Individual study carrels</li>
+                        <li>Group collaboration rooms</li>
+                        <li>eBook & audiobook access</li>
+                    </ul>
+                </div>
+
+                <div class="facility-card">
+                    <i class="fas fa-dumbbell facility-icon"></i>
+                    <h3>Sports & Fitness Complex</h3>
+                    <p>Indoor gymnasium, fitness center, 2 basketball courts, soccer field, track. Daily physical education required for all grades.</p>
+                    <ul>
+                        <li>Certified athletic trainers</li>
+                        <li>Team & individual sports</li>
+                        <li>Adaptive programs available</li>
+                    </ul>
+                </div>
+
+                <div class="facility-card">
+                    <i class="fas fa-users facility-icon"></i>
+                    <h3>Performing Arts Center</h3>
+                    <p>Theater with 300 seats, music rooms, art studios, dance studio. Annual productions, concerts, and art exhibitions.</p>
+                    <ul>
+                        <li>Professional lighting/sound</li>
+                        <li>Orchestra & band programs</li>
+                        <li>Visual arts gallery</li>
+                    </ul>
+                </div>
+
+                <div class="facility-card">
+                    <i class="fas fa-seedling facility-icon"></i>
+                    <h3>Outdoor Learning</h3>
+                    <p>Organic garden, nature trail, environmental lab. Sustainability education integrated across curriculum.</p>
+                    <ul>
+                        <li>Student-led garden club</li>
+                        <li>Outdoor classroom</li>
+                        <li>Recycling/composting programs</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="campus-tour">
+                <h2>Virtual Campus Tour</h2>
+                <div class="tour-cta">
+                    <a href="Gallery.html" class="btn btn-cta">View Photo Gallery <i class="fas fa-camera"></i></a>
+                    <p>Schedule an in-person tour through our <a href="Contact.html">contact page</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="end"></footer>
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+        if (mobileMenu) {
+            mobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+    </script>
+</body>
+</html>

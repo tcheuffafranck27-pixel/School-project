@@ -13,31 +13,36 @@
             <a href="#" class="nav-logo">
                 <h2 class="logo-text">🕊 ELIDENS</h2>
             </a>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="index.html" class="home">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="about.html" class="about">About</a>
-                </li>
-                <li class="nav-item">
-                    <a href="Sections.html" class="sections active">Sections</a>
-                </li>
-                <li class="nav-item">
-                    <a href="Gallery.html" class="Gallery">Gallery</a>
-                </li>
-                <li class="nav-item">
-                    <a href="Contact.html" class="contact">Contact</a>
-                </li>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div> 
+            <ul>
+                <li class="nav-item"><a href="index.html" class="home">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="about">About</a></li>
+                <li class="nav-item"><a href="Sections.html" class="sections">Sections</a></li>
+                <li class="nav-item"><a href="admissions.html" class="admissions active">Admissions</a></li>
+                <li class="nav-item"><a href="facilities.html" class="facilities">Facilities</a></li>
+                <li class="nav-item"><a href="news.html" class="news">News</a></li>
+                <li class="nav-item"><a href="Gallery.html" class="Gallery">Gallery</a></li>
+                <li class="nav-item"><a href="Contact.html" class="contact">Contact</a></li>
+                <li><a href="login.html" class="btn">Login</a></li>
             </ul>
-        </nav>
+            </nav>
     </header>
 
-    <div class="page-container">
+
         <!-- Banner Section -->
         <div class="page-banner">
-            <img src="images/about.jpg" alt="Sections Banner" class="banner-image">
+            <div class="page-hero">
+              <img src="images/about.jpg" alt="Sections Banner" class="banner-image">
+             <div class="page-hero-text">
+               <h1>🏫 Our Sections</h1>
+             </div>
         </div>
+           
+        
 
         <!-- Page Title -->
         <div class="page-title-section">
@@ -50,35 +55,26 @@
             <!-- Sections Grid -->
             <div class="sections-grid">
                 <!-- Primary Section -->
-                <div class="section-card">
-                    <div class="section-icon">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <h3>Primary Section</h3>
-                    <p><strong>Grades:</strong> 1-5</p>
-                    <p>Building strong foundations in literacy, numeracy, and critical thinking. Our primary section focuses on making learning fun and engaging for young learners.</p>
-                    <ul class="section-features">
-                        <li>Small class sizes</li>
-                        <li>Play-based learning</li>
-                        <li>Sports and arts</li>
-                        <li>Character development</li>
-                    </ul>
-                </div>
+
 
                 <!-- Middle Section -->
                 <div class="section-card">
                     <div class="section-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <h3>Middle Section</h3>
-                    <p><strong>Grades:</strong> 6-8</p>
-                    <p>A crucial phase of development where students explore diverse interests and build deeper understanding of subjects. Emphasis on independent learning and social skills.</p>
+<h3>College Section</h3>
+<p><strong>Forms:</strong> 1-5 (Ages 11-16)</p>
+<p>Lower secondary education following Cameroon GCE Ordinary Level curriculum (bilingual English/French streams). Core subjects: Mathematics, Sciences, English, Français, History/Geography, preparing for GCE O-Level.</p>
                     <ul class="section-features">
-                        <li>Subject-specific classes</li>
-                        <li>Team projects</li>
-                        <li>Leadership programs</li>
-                        <li>Science labs</li>
+<li>Bilingual (English/French) Instruction</li>
+                        <li>GCE O-Level Exam Preparation</li>
+                        <li>STEM & Language Focus</li>
+                        <li>Modern Science Laboratories</li>
                     </ul>
+                    <div class="section-stats">
+<span>200 Students</span>
+                        <span>95% GCE O-Level Success Rate</span>
+                    </div>
                 </div>
 
                 <!-- High Section -->
@@ -86,15 +82,19 @@
                     <div class="section-icon">
                         <i class="fas fa-brain"></i>
                     </div>
-                    <h3>High Section</h3>
-                    <p><strong>Grades:</strong> 9-12</p>
-                    <p>Advanced academic preparation for college and career success. Students choose specialized streams and prepare for national and international examinations.</p>
+<h3>High School Section</h3>
+<p><strong>Forms:</strong> Lower Sixth & Upper Sixth (GCE Advanced Level)</p>
+<p>Upper secondary GCE Advanced Level curriculum with streams: Sciences, Commerce, Arts. Prepares for GCE A-Level exams and university entrance.</p>
                     <ul class="section-features">
-                        <li>Advanced curriculum</li>
-                        <li>Career counseling</li>
-                        <li>Research projects</li>
-                        <li>International programs</li>
+<li>GCE O/A Level Preparation</li>
+                        <li>Career Guidance & Streams</li>
+                        <li>University Entrance Coaching</li>
+                        <li>Bilingual Proficiency</li>
                     </ul>
+                    <div class="section-stats">
+<span>250 Students</span>
+                        <span>92% GCE A-Level Pass</span>
+                    </div>
                 </div>
             </div>
 
@@ -108,5 +108,15 @@
     </div>
 
     <footer class="end"></footer>
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+        if (mobileMenu) {
+            mobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+    </script>
 </body>
 </html>

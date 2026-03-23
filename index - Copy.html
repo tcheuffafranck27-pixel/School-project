@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELIDENS COMPREHENSIVE COLLEGE</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar content">
+            <a href="#" class="nav-logo">
+                <h2  class="logo-text">🕊 ELIDENS</h2>
+            </a>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="home active">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="about.html" class="about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="Sections.html" class="sections">Sections</a>
+                </li>
+                <li class="nav-item">
+                    <a href="admissions.html" class="admissions">Admissions</a>
+                </li>
+                <li class="nav-item">
+                    <a href="facilities.html" class="facilities">Facilities</a>
+                </li>
+                <li class="nav-item">
+                    <a href="Gallery.html" class="Gallery">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a href="news.html" class="news">News</a>
+                </li>
+                <li class="nav-item">
+                    <a href="Contact.html" class="contact">Contact</a>
+                </li>
+            </ul>
+            <div id="authStatus" class="auth-status login-required">Login</div>
+        </nav>
+    </header>
+    <main>
+    <section class="brief">
+        <div class="brief-content">
+            <div>
+                <div class="brief-details">
+                        <h2 class="title">Welcome to ELIDENS COMPREHENSIVE COLLEGE</h2>
+                        <h2 class="title-2">Your Gateway to Quality Education and Holistic Development</h2>
+                        <p class="description">Founded in 1995, ELIDENS Comprehensive College has been a beacon of excellence for over 25 years. With 95% college placement rate, state-of-the-art facilities, award-winning faculty, and 500+ students thriving in a nurturing environment. Join our vibrant community where curiosity meets opportunity!</p>
+                </div>
+                <div class="brief-info">
+                 <a href="admissions.html" class="btn-cta">Enroll Now</a>
+                 <a href="Contact.html" class="btn-secondary">Contact Us</a>
+                </div>
+            </div>
+                <div class="brief-image-logo">
+                <img src="images/School logo.png" alt="ELIDENS Comprehensive College" class="brief-image">
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">College Placement</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Years Excellence</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Happy Students</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Expert Faculty</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <h2 class="section-title">What Parents Say</h2>
+            <div class="testimonials-carousel">
+                <div class="testimonial active">
+                    <p>"ELIDENS transformed my child's education. The teachers are exceptional!"</p>
+                    <div class="testimonial-author">- Sarah Johnson, Parent</div>
+                </div>
+                <div class="testimonial">
+                    <p>"Best decision we made. Great facilities and holistic development."</p>
+                    <div class="testimonial-author">- Michael Lee, Parent</div>
+                </div>
+                <div class="testimonial">
+                    <p>"Outstanding academic results and character building."</p>
+                    <div class="testimonial-author">- Priya Patel, Parent</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </main>
+    <script>
+        // Mobile menu toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if (mobileMenu) {
+            mobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+
+        // Testimonials Carousel
+        let currentTestimonial = 0;
+        const testimonials = document.querySelectorAll('.testimonial');
+        const totalTestimonials = testimonials.length;
+
+        function showTestimonial(index) {
+            testimonials.forEach((t, i) => {
+                t.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextTestimonial() {
+            currentTestimonial = (currentTestimonial + 1) % totalTestimonials;
+            showTestimonial(currentTestimonial);
+        }
+
+        function prevTestimonial() {
+            currentTestimonial = (currentTestimonial - 1 + totalTestimonials) % totalTestimonials;
+            showTestimonial(currentTestimonial);
+        }
+
+        // Auto rotate every 5 seconds
+        setInterval(nextTestimonial, 5000);
+
+        // Manual navigation
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('carousel-next')) nextTestimonial();
+            if (e.target.classList.contains('carousel-prev')) prevTestimonial();
+        });
+    </script>
+    <script>
+        // Contact form handler (placeholder)
+        document.querySelector('.contact-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            e.target.reset();
+        });
+    </script>
+    
+    <!-- Global Auth Script -->
+    <script type="module">
+        import { initAuth, auth, isLoggedIn } from './js/firebase-config.js';
+        import { getStoredEmail } from './js/utils.js';
+        
+        // Global auth functions
+        window.initAuth = initAuth;
+        window.auth = auth;
+        window.isLoggedIn = isLoggedIn;
+        // Init auth on page load - navigate to login page instead of modal
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth((user) => {
+                const statusEl = document.getElementById('authStatus');
+                if (statusEl) {
+                    if (user) {
+                        statusEl.textContent = `Hi, ${user.displayName || user.email}`;
+                        statusEl.className = 'auth-status';
+                        statusEl.onclick = async () => {
+                            try {
+                                await auth.signOut();
+                            } catch (e) {
+                                console.error('Logout error:', e);
+                            }
+                        };
+                    } else {
+                        statusEl.textContent = 'Login';
+                        statusEl.className = 'auth-status login-required';
+                        statusEl.onclick = () => { window.location.href = 'admin.html'; };
+                    }
+                }
+            });
+        });
+    </script>
+</body> 
+</html>

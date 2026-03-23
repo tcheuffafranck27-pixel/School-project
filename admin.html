@@ -13,9 +13,16 @@
         </a>
         <ul class="nav-menu">
             <li class="nav-item"><a href="index.html">Home</a></li>
+            <li class="nav-item"><a href="about.html">About</a></li>
+            <li class="nav-item"><a href="Sections.html">Sections</a></li>
+            <li class="nav-item"><a href="admissions.html" class="admissions">Admissions</a></li>
+            <li class="nav-item"><a href="facilities.html" class="facilities">Facilities</a></li>
             <li class="nav-item"><a href="Gallery.html">Gallery</a></li>
-            <li class="nav-item"><a href="admin.html" class="active">Admin</a></li>
+            <li class="nav-item"><a href="news.html">News</a></li>
+            <li class="nav-item"><a href="Contact.html">Contact</a></li>
+            <li class="nav-item"><a href="admin.html" class="active">Login/Admin</a></li>
         </ul>
+        <div id="authStatus" class="auth-status login-required">Login</div>
     </nav>
 </header>
 
@@ -57,13 +64,96 @@
 <h2>📸 Gallery Posts</h2>
 <div id="gallery-posts-list"class="gallery-posts-admin"></div>
 </div>
+<div class="admin-section">
+<h2>📰 News Posts</h2>
+<div id="news-posts-list"class="news-posts-admin"></div>
+<button class="btn btn-create" onclick="showCreateNewsForm()">➕ Create New News</button>
+<form id="createNewsForm"class="create-post-form" style="display:none;">
+    <div class="form-group"><label for="newsTitle">News Title:</label><input type="text"id="newsTitle"required></div>
+    <div class="form-group"><label for="newsContent">News Content:</label><textarea id="newsContent"rows="6"required></textarea></div>
+    <div class="form-group"><label for="newsImage">Featured Image:</label><input type="file"id="newsImage"accept="image/*"></div>
+    <div class="form-group"><label for="newsAuthor">Author:</label><input type="text"id="newsAuthor"placeholder="Admin / School News"></div>
+    <button type="submit"class="btn btn-create">Publish News</button>
+    <button type="button"class="btn btn-secondary"onclick="hideCreateNewsForm()">Cancel</button>
+</form>
+</div>
 </div>
 
 <footer class="end"></footer>
 <script type="module">
-import { db } from './js/firebase-config.js';
+import { db, initAuth, auth, canInteract } from './js/firebase-config.js';
 import { collection, doc, getDocs, deleteDoc, updateDoc, setDoc, onSnapshot, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-import { getTimeAgo, createUser, fileToDataURL } from './js/utils.js';
+import { getStoredEmail, getTimeAgo, fileToDataURL } from './js/utils.js';
+
+initAuth(() => {
+  const container = document.querySelector('.admin-container');
+  const statusEl = document.getElementById('authStatus');
+  if (!canInteract()) {
+    // Show login page UI
+    container.innerHTML = `
+      <div class="login-page">
+        <div class="login-modal-content">
+          <div class="login-modal-header">
+            <h2>Login to ELIDENS Admin</h2>
+            <p>Access admin dashboard or create account</p>
+          </div>
+          <div id="loginError" class="login-error"></div>
+          <div class="login-tabs">
+            <button class="login-tab active" id="loginTabBtn">Login</button>
+            <button class="login-tab" id="signupTabBtn">Sign Up</button>
+          </div>
+          <form class="login-form active" id="loginForm">
+            <div class="login-form-group">
+              <label>Email</label>
+              <input type="email" id="loginEmail" required>
+            </div>
+            <div class="login-form-group">
+              <label>Password</label>
+              <input type="password" id="loginPassword" required>
+            </div>
+            <button type="submit" class="login-submit">Log In</button>
+          </form>
+          <form class="login-form" id="signupForm">
+            <div class="login-form-group">
+              <label>Email</label>
+              <input type="email" id="signupEmail" required>
+            </div>
+            <div class="login-form-group">
+              <label>Display Name</label>
+              <input type="text" id="signupName" required>
+            </div>
+            <div class="login-form-group">
+              <label>Password</label>
+              <input type="password" id="signupPassword" required>
+            </div>
+            <button type="submit" class="login-submit">Create Account</button>
+          </form>
+          <div class="login-switch" id="switchLink">
+            <span>or </span><a href="#" id="switchSignup">create account</a>
+          </div>
+        </div>
+      </div>`;
+    
+    statusEl.textContent = 'Login';
+    statusEl.className = 'auth-status login-required';
+    statusEl.style.display = 'none'; // Hide on login page
+    
+    // Setup login handlers
+    setupLoginHandlers();
+    
+    // Pre-fill stored email
+    const storedEmail = getStoredEmail();
+    if (storedEmail) {
+      document.getElementById('loginEmail').value = storedEmail;
+      document.getElementById('signupEmail').value = storedEmail;
+    }
+  } else {
+    // Show dashboard and setup status
+    statusEl.textContent = \`Hi, \${auth.currentUser.displayName || auth.currentUser.email}\`;
+    statusEl.className = 'auth-status';
+    statusEl.onclick = async () => await auth.signOut();
+  }
+});
 
 let allComments = [];
 let currentFilter = 'all';
@@ -188,6 +278,83 @@ document.getElementById('createPostForm').addEventListener('submit', async e => 
 
 loadAllComments();
 loadGalleryPosts();
+
+// News Posts Management
+const loadNewsPosts = () => onSnapshot(collection(db, 'news-posts'), async snapshot => {
+    const c = document.getElementById('news-posts-list');
+    c.innerHTML = '';
+    if (snapshot.empty) {
+        c.innerHTML = '<p class="no-data">No news posts yet</p>';
+        return;
+    }
+    snapshot.docs.forEach(d => {
+        const data = d.data();
+        const cr = data.createdAt?.toDate?.() ?? new Date();
+        const div = document.createElement('div');
+        div.className = 'post-admin';
+        div.innerHTML = `
+            <div class="post-admin-header">
+                <h3>${data.title}</h3>
+                <span class="date-badge">${cr.toLocaleDateString()}</span>
+            </div>
+            <p class="post-author">By: ${data.author || 'Admin'}</p>
+            <p class="post-description">${data.content.substring(0, 100)}...</p>
+            ${data.imageUrl ? `<p class="media-info">🖼️ Featured Image</p>` : ''}
+            <div class="post-admin-actions">
+                <button class="btn btn-delete" onclick="deleteNewsPost('${d.id}')"><i class="fas fa-trash"></i> Delete</button>
+            </div>`;
+        c.appendChild(div);
+    });
+});
+
+window.showCreateNewsForm = () => {
+    document.getElementById('createNewsForm').style.display = 'block';
+};
+
+window.hideCreateNewsForm = () => {
+    document.getElementById('createNewsForm').style.display = 'none';
+    document.getElementById('createNewsForm').reset();
+};
+
+window.deleteNewsPost = async (pid) => {
+    if (!confirm('Delete this news post?')) return;
+    try {
+        await deleteDoc(doc(db, 'news-posts', pid));
+        alert('News post deleted');
+    } catch (e) {
+        alert('Error: ' + e.message);
+    }
+};
+
+document.getElementById('createNewsForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = document.getElementById('newsTitle').value;
+    const content = document.getElementById('newsContent').value;
+    const imageFile = document.getElementById('newsImage').files[0];
+    const author = document.getElementById('newsAuthor').value || 'Admin';
+    let imageUrl = '';
+    
+    try {
+        if (imageFile) {
+            imageUrl = await fileToDataURL(imageFile);
+        }
+        const id = 'news_' + Date.now();
+        await setDoc(doc(db, 'news-posts', id), {
+            id,
+            title,
+            content,
+            author,
+            imageUrl,
+            createdAt: serverTimestamp()
+        });
+        alert('✅ News post published!');
+        hideCreateNewsForm();
+    } catch (err) {
+        alert('❌ Error: ' + err.message);
+    }
+});
+
+loadNewsPosts();
 </script>
 </body>
 </html>
